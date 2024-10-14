@@ -13,5 +13,6 @@ class Item extends Model
         'valor',
         'latitude',
         'longitude',
+        'idExplorer',
     ];
 }

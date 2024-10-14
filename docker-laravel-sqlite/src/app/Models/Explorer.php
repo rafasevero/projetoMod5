@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Explorer extends Model
 {
     use HasFactory;
+
+    
     protected $fillable = [
         'nome',
         'idade',
