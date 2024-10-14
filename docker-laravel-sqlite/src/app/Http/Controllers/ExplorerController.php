@@ -24,7 +24,21 @@ class ExplorerController extends Controller
             ]); 
     }
 
-    public function update(Request $request){
+    public function update(Request $request, $id){
+        
+        $atualizarExplorer = $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+        
+        $explorer = Explorer::findOrFail($id);
+
+        $explorer->update($atualizarExplorer);
+
+        return response()->json([
+            'message' => 'Localização atualizada com sucesso, PARABÉNS! ',
+            'explorer'=>$explorer,
+            ]); 
 
     }
 
