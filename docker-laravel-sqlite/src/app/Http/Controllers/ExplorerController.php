@@ -66,10 +66,12 @@ class ExplorerController extends Controller
     public function trocaItems(Request $request){
         
         $request->validate([
-            'explorers1_Id' => 'required|exists:explorers.id',
-            'explorers2_Id' => 'required|exists:explorers.id',
-            'item1_Id' => 'required|exists:item.id',
-            'item2_Id' => 'required|exists:item.id',
+            'explorers1_Id' => 'required|exists:explorers,id',
+            'explorers2_Id' => 'required|exists:explorers,id',
+            'itemExplorer1' => 'required|array',
+            'itemExplorer1.*' => 'exists:items,id',
+            'itemExplorer2' => 'required|array',
+            'itemExplorer2.*' => 'exists:items,id',
         ]);
         
         $explorers1 = Explorer::find($request->explorers1_Id);
@@ -87,28 +89,25 @@ class ExplorerController extends Controller
         }
 
 
-    if ($itemsExplorer1->explorer_id !== $explorers1->id) {
-        return response()->json(['error' => 'O item 1 não é do explorer 1.'], 400);
-    }
-
-    if ($itemsExplorer2->explorer_id !== $explorers2->id) {
-        return response()->json(['error' => 'o item 2 não é do explorer 2.'], 400);
-    }
     
-
-
-
-    $itemsExplorer1->explorer_id = $explorers2->id;
-    $itemsExplorer2->explorer_id = $explorers1->id;
-
-    $itemsExplorer1->save();
-    $itemsExplorer2->save();
-
+    Item::whereIn('id', $request->itemExplorer1)->update(['idExplorer' => $explorers2->id]);
+    Item::whereIn('id', $request->itemExplorer2)->update(['idExplorer' => $explorers1->id]);
+        
     return response()->json([
         'message' => 'A troca foi feita com sucesso!'
-    ]);    
+    ]); 
 
+    }
 
+    public function show($id){
+        $explorer = Explorer::find($id);
+        if (!$explorer) {
+            return response()->json([
+                'message'=> 'Explorer Not Found'
+            ]);
+        }
+
+        return response()->json($explorer);
     }
 
 }
